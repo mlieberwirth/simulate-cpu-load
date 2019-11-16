@@ -1,6 +1,8 @@
 package cpuload;
 
 import java.lang.management.ManagementFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -9,9 +11,11 @@ import javax.management.ObjectName;
 
 public class Load
 {
+    private static final Logger log = Logger.getLogger( Load.class.getName() );
+
     private static final int NUMBER_CORES = 2;
     private static final int NUMBER_THEADS_PER_CORE = 2;
-    private static final double SIMULATED_LOAD_PERCENT = 0.6;
+    private static final double SIMULATED_LOAD_PERCENT = 0.5;
     private static final long SIMULATION_RUNTIME_SEC = 10;
     private static final long LOGGING_INTERVAL_SEC = 2;
 
@@ -24,13 +28,13 @@ public class Load
     
     private void simulateLoad()
     {
-        System.out.println("Will run: " + SIMULATION_RUNTIME_SEC + "sec");
-        System.out.println("Target cpu is: " + SIMULATED_LOAD_PERCENT * 100 + "%");
+        log.info("Will run: " + SIMULATION_RUNTIME_SEC + "sec");
+        log.info("Target cpu is: " + SIMULATED_LOAD_PERCENT * 100 + "%");
 
         int maxThreads = NUMBER_CORES * NUMBER_THEADS_PER_CORE;
         for (int thread = 0; thread < maxThreads; thread++)
         {
-            System.out.println("Start thread number: " + (thread + 1) + " of " + maxThreads);
+            log.info("Start thread number: " + (thread + 1) + " of " + maxThreads);
             new BusyThread("Thread" + thread, SIMULATED_LOAD_PERCENT, SIMULATION_RUNTIME_SEC).start();
         }
 
@@ -38,7 +42,7 @@ public class Load
 
         while(System.currentTimeMillis() - startTime < SIMULATION_RUNTIME_SEC * 1_000)
         {
-            System.out.println("Running: " + (System.currentTimeMillis() - startTime) / 1_000 + " of "
+            log.info("Running: " + (System.currentTimeMillis() - startTime) / 1_000 + " of "
                             + SIMULATION_RUNTIME_SEC + " sec " + getCurrentCpuLoad() + "% cpu");
             sleep(LOGGING_INTERVAL_SEC * 1_000);
         }
@@ -65,12 +69,12 @@ public class Load
                 return Double.NaN;
             }
             // returns a percentage value with 1 decimal point precision
-            return ((int)(value * 1000) / 10.0);
+            return ((int)(value * 1_000) / 10.0);
 
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Exception while get current cpu load",e);
         }
         return 0d;
     }
@@ -83,7 +87,7 @@ public class Load
         }
         catch(InterruptedException e)
         {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Sleep exception",e);
         }
     }
 
@@ -126,7 +130,7 @@ public class Load
             }
             catch(InterruptedException e)
             {
-                e.printStackTrace();
+                log.log(Level.SEVERE, "Exception in load simulation.",e);
             }
         }
     }
