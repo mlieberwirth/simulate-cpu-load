@@ -1,0 +1,6 @@
+version: '2.2'
+services:
+  docker-cpu-load:
+    image: docker-cpu-load-app
+    # limit cpu for this container
+    cpus: 1.5
