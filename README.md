@@ -6,7 +6,7 @@ With this app it is possible to simulate cpu-load in a docker-container and also
 
 ## Build and run
 
-### Preconditions
+### Precondition
 Only docker and optional docker-compose to use the compose.yml file.
 
 ### Build image
@@ -24,3 +24,4 @@ Reduce container cpus with docker only
    docker run --cpus="1.0" docker-cpu-load-app
 
 To reduce cpus with docker-compose see "cpus" in docker-compose.yml
+
